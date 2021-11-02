@@ -7,25 +7,25 @@ const Newsletter = () => {
   const [emailTouched, setEmailTouched] = useState(false)
   const [apiError, setApiError] = useState(false)
 
-  const handleNameChange = event => {
-    const newName = event.currentTarget.value
+  const handleNameChange = ({ currentTarget }) => {
+    const newName = currentTarget.value
     if(!newName.length) {
       setNameError(new Error('invalid name'))
     } else {
       setNameError(null)
     }
-    setServerError(false)
+    setApiError(false)
     setName(newName)
   }
 
-  const handleEmailChange = event => {
-    const newEmail = event.currentTarget.email
+  const handleEmailChange = ({ currentTarget }) => {
+    const newEmail = currentTarget.email
     if(!newEmail.match(/^[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.([a-z]+)?$/i)) {
       setEmailError(new Error('invalid email'))
     } else {
       setEmailError(null)
     }
-    setServerError(false)
+    setApiError(false)
     setEmail(newEmail)
   }
 

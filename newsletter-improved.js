@@ -1,3 +1,25 @@
+const useNewsletter = () => {
+  const [loading, setLoading] = useState(false)
+  const [apiError, setApiError] = useState(false)
+
+  const sendNewsletter = () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/newsletter', { method: 'POST', body: { name, email } })
+      if(!response.ok) {
+        setApiError(true)
+      }
+    } catch (error) {
+      console.error('[Newsletter]:', error.message)
+      setApiError(true)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return [sendNewsletter, { apiError, loading }]
+}
+
 const Newsletter = () => {
   const [name, setName] = useState('')
   const [nameError, setNameError] = useState(null)
@@ -5,7 +27,24 @@ const Newsletter = () => {
   const [email, setEmail] = useState('')
   const [emailError, setEmailError] = useState(null)
   const [emailTouched, setEmailTouched] = useState(false)
-  const [apiError, setApiError] = useState(false)
+  const [sendNewsletter, { apiError }] = useNewsletter()
+
+  const clearForm = () => {
+    setName('')
+    setEmail('')
+  }
+
+  const isEmailValid = (email) => (
+    !email.match(/^[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.([a-z]+)?$/i)
+  )
+
+  const validateEmail = (email) => {
+    if(isEmailValid(email)) {
+      setEmailError(new Error('invalid email'))
+    } else {
+      setEmailError(null)
+    }
+  }
 
   const handleNameChange = ({ currentTarget }) => {
     const newName = currentTarget.value
@@ -20,11 +59,7 @@ const Newsletter = () => {
 
   const handleEmailChange = ({ currentTarget }) => {
     const newEmail = currentTarget.email
-    if(!newEmail.match(/^[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.([a-z]+)?$/i)) {
-      setEmailError(new Error('invalid email'))
-    } else {
-      setEmailError(null)
-    }
+    validateEmail()
     setApiError(false)
     setEmail(newEmail)
   }
@@ -38,20 +73,11 @@ const Newsletter = () => {
   }
 
   const handleSubmit = async () => {
-    setName('')
-    setEmail('')
+    clearForm()
     setNameTouched(true)
     setEmailTouched(true)
 
-    try {
-      const response = await fetch('/api/newsletter', { method: 'POST', body: { name, email } })
-      if(!response.ok) {
-        setApiError(true)
-      }
-    } catch (error) {
-      console.error('[Newsletter]:', error.message)
-      setApiError(true)
-    }
+    sendNewsletter()
   }
 
   return (

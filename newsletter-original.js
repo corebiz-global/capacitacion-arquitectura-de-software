@@ -8,13 +8,25 @@ const Newsletter = () => {
   const [apiError, setApiError] = useState(false)
 
   const handleNameChange = event => {
+    const newName = event.currentTarget.value
+    if(!newName.length) {
+      setNameError(new Error('invalid name'))
+    } else {
+      setNameError(null)
+    }
     setServerError(false)
-    setName(event.currentTarget.value)
+    setName(newName)
   }
 
   const handleEmailChange = event => {
+    const newEmail = event.currentTarget.email
+    if(!newEmail.match(/^[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.([a-z]+)?$/i)) {
+      setEmailError(new Error('invalid email'))
+    } else {
+      setEmailError(null)
+    }
     setServerError(false)
-    setEmail(event.currentTarget.value)
+    setEmail(newEmail)
   }
 
   const handleNameBlur = () => {
